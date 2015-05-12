@@ -16,7 +16,8 @@ android:
     - extra-google-google_play_services
     - extra-google-m2repository
     - extra-android-m2repository
-    - addon-google_apis-google-19
+    - extra-android-support
+    - addon-google_apis-google-22
 
     # Specify at least one system image,
     # if you need to run emulator(s) during your tests
@@ -29,3 +30,6 @@ deploy:
   file: app/build/outputs/apk/app-debug.apk
   on:
     repo: PlayRTC/PlayRTC-Android-Tutorial-SimpleChat
+  skip_cleanup: true
+  on:
+    tags: true

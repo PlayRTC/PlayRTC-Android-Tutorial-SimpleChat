@@ -22,7 +22,7 @@ dependencies {
     //    compile files('libs/libjingle_peerconnection.jar')
     //    compile files('libs/sktplayrtc-client.2.0.0.jar')
     compile fileTree(dir: 'libs', include: ['*.jar'])
-    compile 'com.android.support:support-v13:22.1.+'
-    compile 'com.android.support:appcompat-v7:22.1.+'
-    compile 'com.android.support:recyclerview-v7:22.1.+'
+    compile 'com.android.support:support-v13:22.1.1'
+    compile 'com.android.support:appcompat-v7:22.1.1'
+    compile 'com.android.support:recyclerview-v7:22.1.1'
 }
