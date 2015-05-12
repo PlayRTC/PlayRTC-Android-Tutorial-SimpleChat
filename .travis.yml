@@ -7,10 +7,10 @@ android:
     # - tools
 
     # The BuildTools version used by your project
-    - build-tools-19.1.0
+    - build-tools-22.0.1
 
     # The SDK version used to compile your project
-    - android-19
+    - android-22
 
     # Additional components
     - extra-google-google_play_services
@@ -20,5 +20,12 @@ android:
 
     # Specify at least one system image,
     # if you need to run emulator(s) during your tests
-    - sys-img-armeabi-v7a-android-19
-    - sys-img-x86-android-17
+    # - sys-img-armeabi-v7a-android-19
+    # - sys-img-x86-android-17
+deploy:
+  provider: releases
+  api_key:
+    secure: CULs4/id7b+bXo8+Om/LJcPjnvQ3RWeS7y7OohVM0/R4PHEO9wFMRVchHXHaTwkGgSAjnDkreDL9fxrbaHx9hGaBOgsewS9JfhdmSlpdCUO1d30r3hGuHGCSRQRD72LQkWSqdEi6TgrXLavZfp8aH8U42khkmCFsd/+dJrND3hI=
+  file: app/build/outputs/apk/app-debug.apk
+  on:
+    repo: PlayRTC/PlayRTC-Android-Tutorial-SimpleChat

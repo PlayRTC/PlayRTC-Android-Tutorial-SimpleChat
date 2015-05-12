@@ -9,6 +9,7 @@ PlayRTC의 안드로이드 튜토리얼 SimpleChat
 - PlayRTC Android SDK Version : 2.0.0
 - Build : Gradle
 - IDE : Android Studio
+- Deploy : [TravisCI](https://travis-ci.org/PlayRTC/PlayRTC-Android-Tutorial-SimpleChat)
 
 ## 배포
 - 특정 Git 커밋에 버전 태그를 삽입
