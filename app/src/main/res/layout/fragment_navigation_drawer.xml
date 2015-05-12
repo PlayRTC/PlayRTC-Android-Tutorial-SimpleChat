@@ -1,0 +1,116 @@
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@color/md_grey_200"
+    tools:context="com.playrtc.simplechat.NavigationDrawerFragment">
+
+    <LinearLayout
+        android:id="@+id/nav_header"
+        android:layout_width="match_parent"
+        android:layout_height="140dp"
+        android:background="@color/primary"
+        android:gravity="bottom"
+        android:orientation="vertical"
+        android:paddingLeft="16dp"
+        android:paddingRight="16dp"
+        android:paddingBottom="8dp">
+
+        <TextView
+            android:id="@+id/profileText"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:gravity="center_horizontal"
+            android:text="@string/app_name"
+            android:textAppearance="?android:attr/textAppearanceLarge" />
+
+        <EditText
+            android:id="@+id/channel_id"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:editable="false"
+            android:enabled="false"
+            android:gravity="center"
+            android:hint="@string/channel_id_hint"
+            android:textColor="@color/primary_light"
+            android:textAppearance="?android:attr/textAppearanceSmall"
+            android:inputType="none" />
+    </LinearLayout>
+
+    <LinearLayout
+        android:id="@+id/nav_main"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_below="@+id/nav_header"
+        android:orientation="vertical"
+        android:paddingLeft="16dp"
+        android:paddingRight="16dp"
+        android:paddingTop="8dp"
+        android:paddingBottom="8dp"
+        android:layout_alignParentEnd="false">
+
+        <Button
+            android:id="@+id/create_button"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="@string/create_and_connect"
+            android:textColor="@color/primary"
+            android:theme="@style/Base.ThemeOverlay.AppCompat.Light" />
+
+        <Space
+            android:layout_width="match_parent"
+            android:layout_height="8dp" />
+
+        <EditText
+            android:id="@+id/connect_channel_id"
+            style="@style/AppTheme"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:hint="@string/connect_channel_id_hint"
+            android:imeOptions="actionSend"
+            android:inputType="textCapCharacters"
+            android:textColor="@color/primary"
+            android:textColorHint="@color/primary_light"
+            android:minHeight="48dp" />
+
+        <Button
+            android:id="@+id/connect_button"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="@string/connect"
+            android:textColor="@color/primary"
+            android:theme="@style/Base.ThemeOverlay.AppCompat.Light" />
+
+        <Button
+            android:id="@+id/exit_button"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="@string/exit"
+            android:textColor="@color/primary"
+            android:theme="@style/Base.ThemeOverlay.AppCompat.Light" />
+
+    </LinearLayout>
+
+    <LinearLayout
+        android:id="@+id/nav_footer"
+        android:orientation="horizontal"
+        android:layout_width="match_parent"
+        android:layout_height="fill_parent"
+        android:layout_below="@+id/nav_main"
+        android:paddingLeft="16dp"
+        android:paddingRight="16dp"
+        android:paddingTop="8dp"
+        android:layout_alignParentStart="false"
+        android:layout_alignParentEnd="false"
+        android:gravity="bottom">
+
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="@string/powered_by_playrtc"
+            android:gravity="center_horizontal"
+            android:textSize="9sp"
+            android:textColor="@color/primary_light" />
+    </LinearLayout>
+
+</RelativeLayout>
