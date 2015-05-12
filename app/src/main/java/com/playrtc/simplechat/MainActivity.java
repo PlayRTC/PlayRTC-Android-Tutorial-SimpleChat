@@ -13,7 +13,6 @@ import android.widget.Button;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
 
-import com.playrtc.simplechat.R;
 import com.sktelecom.playrtc.PlayRTC;
 import com.sktelecom.playrtc.PlayRTCFactory;
 import com.sktelecom.playrtc.config.PlayRTCSettings;
@@ -35,7 +34,7 @@ public class MainActivity extends ActionBarActivity {
     private PlayRTC playrtc;
     private PlayRTCObserver playrtcObserver;
 
-    private boolean isCloesActivity = false;
+    private boolean isCloseActivity = false;
     private boolean isChannelConnected = false;
     private PlayRTCVideoView localView;
     private PlayRTCVideoView remoteView;
@@ -61,8 +60,6 @@ public class MainActivity extends ActionBarActivity {
         this.setFragmentNavigationDrawer();
 
         this.setOnClickEventListenerToButton();
-
-        this.createCloseAlertDialog();
     }
 
     @Override
@@ -85,11 +82,21 @@ public class MainActivity extends ActionBarActivity {
 
     @Override
     public void onBackPressed() {
-        if (isCloesActivity) {
+        if (isCloseActivity) {
             super.onBackPressed();
         } else {
+            this.createCloseAlertDialog();
             closeAlertDialog.show();
         }
+
+        //
+        //moveTaskToBack(true);
+//        finish();
+//        System.exit(0);
+//        android.os.Process.killProcess(android.os.Process.myPid());
+//        ActivityManager am = (ActivityManager)getSystemService(Activity.ACTIVITY_SERVICE);
+//        am.restartPackage(getPackageName());
+//        am.killBackgroundProcesses(getPackageName());
     }
 
     private void createPlayRTCObserverInstance() {
@@ -127,7 +134,7 @@ public class MainActivity extends ActionBarActivity {
             }
 
             @Override
-            public void onDisconnectChannel(final PlayRTC obj, final String disconnectReson) {
+            public void onDisconnectChannel(final PlayRTC obj, final String disconnectReason) {
                 long delayTime = 0;
 
                 isChannelConnected = false;
@@ -172,7 +179,7 @@ public class MainActivity extends ActionBarActivity {
         // PlayRTC instance have to get the application context.
         settings.android.setContext(getApplicationContext());
 
-        // T Developers Project Key
+        // T Developers Project Key.
         settings.setTDCProjectId("60ba608a-e228-4530-8711-fa38004719c1");
 
         settings.setAudioEnable(true);
@@ -221,7 +228,7 @@ public class MainActivity extends ActionBarActivity {
             // Create the localView.
             localView = new PlayRTCVideoView(videoViewGroup.getContext(), displaySize);
 
-            // Set the layout parametas and add the view to the videoViewGrop.
+            // Set the layout parameters and add the view to the videoViewGrop.
             localView.setLayoutParams(param);
             videoViewGroup.addView(localView);
 
@@ -243,14 +250,14 @@ public class MainActivity extends ActionBarActivity {
             // Create the remoteView.
             remoteView = new PlayRTCVideoView(viewGroup.getContext(), displaySize);
 
-            // Set the layout parametars and add the view to the videoViewGroup.
+            // Set the layout parameters and add the view to the videoViewGroup.
             remoteView.setLayoutParams(param);
             viewGroup.addView(remoteView);
         }
     }
 
     private void setOnClickEventListenerToButton() {
-        // Add a create channel event listener
+        // Add a create channel event listener.
         Button createButton = (Button) findViewById(R.id.create_button);
         createButton.setOnClickListener(new View.OnClickListener() {
             public void onClick(View v) {
@@ -262,7 +269,7 @@ public class MainActivity extends ActionBarActivity {
             }
         });
 
-        // Add a connect channel event listener
+        // Add a connect channel event listener.
         Button connectButton = (Button) findViewById(R.id.connect_button);
         connectButton.setOnClickListener(new View.OnClickListener() {
             public void onClick(View v) {
@@ -276,10 +283,11 @@ public class MainActivity extends ActionBarActivity {
             }
         });
 
-        // Add a exit channel event listener
+        // Add a exit channel event listener.
         Button exitButton = (Button) findViewById(R.id.exit_button);
         exitButton.setOnClickListener(new View.OnClickListener() {
             public void onClick(View v) {
+                // null means my user id.
                 playrtc.disconnectChannel(null);
             }
         });
@@ -306,11 +314,13 @@ public class MainActivity extends ActionBarActivity {
         alertDialogBuilder.setPositiveButton(R.string.alert_positive, new DialogInterface.OnClickListener() {
             public void onClick(DialogInterface dialogInterface, int id) {
                 dialogInterface.dismiss();
-                if (isChannelConnected = true) {
-                    isCloesActivity = false;
+                if (isChannelConnected == true) {
+                    isCloseActivity = false;
+
+                    // null means my user id.
                     playrtc.disconnectChannel(null);
                 } else {
-                    isCloesActivity = true;
+                    isCloseActivity = true;
                     onBackPressed();
                 }
             }
@@ -318,7 +328,7 @@ public class MainActivity extends ActionBarActivity {
         alertDialogBuilder.setNegativeButton(R.string.alert_negative, new DialogInterface.OnClickListener() {
             public void onClick(DialogInterface dialogInterface, int id) {
                 dialogInterface.dismiss();
-                isCloesActivity = false;
+                isCloseActivity = false;
             }
         });
 
