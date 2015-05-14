@@ -7,6 +7,12 @@ PlayRTC의 안드로이드 튜토리얼 SimpleChat
 이 저장소는 PlayRTC의 안드로이드 SDK를 사용하는데 있어서 가장 기본적인 내용을 담고 있습니다.
 이 예제를 통해 PlayRTC의 가장 기본 적인 예제인 화상 채팅 앱을 만들 수 있으며, 직접 사용해 볼 수 있습니다.
 
+## 로그
+SimpleChat앱은 테스트를 위한 용도로 로그를 SD카드에 저장하도록 되어있습니다.
+저장 위치는 아래와 같습니다.
+
+- `/Android/data/com.playrtc.simplechat/files/log`
+
 ## 버전
 - 버전은 [유의적 버전 2.0.0](http://semver.org/lang/ko/)를 따름
 - 단 `x`.y.z 형태에서 주 버전인 `x`는 PlayRTC Android SDK Version을 그대로 따르도록 함
@@ -24,6 +30,9 @@ PlayRTC의 안드로이드 튜토리얼 SimpleChat
 - Github의 Release에 apk 파일 업로드
 
 ## 버전 히스토리
+
+### 2.0.2-rc.2
+- 수정 : 라이브러리 2.0.1-rc.2으로 업데이트
 
 ### 2.0.2-rc.1
 - 수정 : 라이브러리 2.0.1-rc.1으로 업데이트

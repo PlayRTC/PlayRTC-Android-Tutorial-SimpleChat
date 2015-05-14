@@ -152,7 +152,7 @@ public class MainActivity extends ActionBarActivity {
                 // Delete channel and call onDisconnectChannel.
                 // Because there is a bug which is killed app. If remote peer reconnect after disconnect channel.
                 // This is going to patch at 2.0.1.
-                playrtc.deleteChannel();
+                // playrtc.deleteChannel();
             }
         };
     }
@@ -181,12 +181,11 @@ public class MainActivity extends ActionBarActivity {
         settings.video.setFrontCameraEnable(true);
         settings.video.setBackCameraEnable(true);
         settings.setDataEnable(false);
-        settings.log.console.setLevel(PlayRTCSettings.DEBUG);
 
-		// File logging setting
+        // File logging setting
         File logPath = new File(Environment.getExternalStorageDirectory().getAbsolutePath() +
                 "/Android/data/" + getPackageName() + "/files/log/");
-        if(logPath.exists() == false) {
+        if (logPath.exists() == false) {
             logPath.mkdirs();
         }
         settings.log.file.setLogPath(logPath.getAbsolutePath());
