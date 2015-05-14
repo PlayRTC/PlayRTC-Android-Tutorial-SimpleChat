@@ -88,15 +88,6 @@ public class MainActivity extends ActionBarActivity {
             this.createCloseAlertDialog();
             closeAlertDialog.show();
         }
-
-        //
-        //moveTaskToBack(true);
-//        finish();
-//        System.exit(0);
-//        android.os.Process.killProcess(android.os.Process.myPid());
-//        ActivityManager am = (ActivityManager)getSystemService(Activity.ACTIVITY_SERVICE);
-//        am.restartPackage(getPackageName());
-//        am.killBackgroundProcesses(getPackageName());
     }
 
     private void createPlayRTCObserverInstance() {
