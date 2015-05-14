@@ -5,6 +5,7 @@ import android.app.AlertDialog;
 import android.content.DialogInterface;
 import android.graphics.Point;
 import android.os.Bundle;
+import android.os.Environment;
 import android.support.v4.widget.DrawerLayout;
 import android.support.v7.app.ActionBarActivity;
 import android.support.v7.widget.Toolbar;
@@ -24,6 +25,8 @@ import com.sktelecom.playrtc.stream.PlayRTCMedia;
 import com.sktelecom.playrtc.util.ui.PlayRTCVideoView;
 
 import org.json.JSONObject;
+
+import java.io.File;
 
 
 public class MainActivity extends ActionBarActivity {
@@ -179,6 +182,16 @@ public class MainActivity extends ActionBarActivity {
         settings.video.setBackCameraEnable(true);
         settings.setDataEnable(false);
         settings.log.console.setLevel(PlayRTCSettings.DEBUG);
+
+		// File logging setting
+        File logPath = new File(Environment.getExternalStorageDirectory().getAbsolutePath() +
+                "/Android/data/" + getPackageName() + "/files/log/");
+        if(logPath.exists() == false) {
+            logPath.mkdirs();
+        }
+        settings.log.file.setLogPath(logPath.getAbsolutePath());
+        settings.log.file.setLevel(PlayRTCSettings.DEBUG);
+
     }
 
     private void createVideoView() {
