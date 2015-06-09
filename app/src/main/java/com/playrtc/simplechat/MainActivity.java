@@ -52,17 +52,17 @@ public class MainActivity extends ActionBarActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
-        this.createPlayRTCObserverInstance();
+        createPlayRTCObserverInstance();
 
-        this.createPlayRTCInstance();
+        createPlayRTCInstance();
 
-        this.setPlayRTCConfiguration();
+        setPlayRTCConfiguration();
 
-        this.setToolbar();
+        setToolbar();
 
-        this.setFragmentNavigationDrawer();
+        setFragmentNavigationDrawer();
 
-        this.setOnClickEventListenerToButton();
+        setOnClickEventListenerToButton();
     }
 
     @Override
@@ -71,7 +71,7 @@ public class MainActivity extends ActionBarActivity {
 
         // Make the videoView at the onWindowFocusChanged time.
         if (hasFocus && this.localView == null) {
-            this.createVideoView();
+            createVideoView();
         }
     }
 
