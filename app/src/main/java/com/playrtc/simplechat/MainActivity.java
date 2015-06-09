@@ -88,7 +88,7 @@ public class MainActivity extends ActionBarActivity {
         if (isCloseActivity) {
             super.onBackPressed();
         } else {
-            this.createCloseAlertDialog();
+            createCloseAlertDialog();
             closeAlertDialog.show();
         }
     }
