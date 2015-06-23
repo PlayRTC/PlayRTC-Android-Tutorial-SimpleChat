@@ -31,6 +31,9 @@ import java.io.File;
 
 public class MainActivity extends ActionBarActivity {
 
+    // Please change this key for your own project.
+    private final String T_DEVELOPERS_PROJECT_KEY = "60ba608a-e228-4530-8711-fa38004719c1";
+
     private Toolbar toolbar;
     private AlertDialog closeAlertDialog;
 
@@ -41,11 +44,7 @@ public class MainActivity extends ActionBarActivity {
     private boolean isChannelConnected = false;
     private PlayRTCVideoView localView;
     private PlayRTCVideoView remoteView;
-    private PlayRTCMedia localMedia;
-    private PlayRTCMedia remoteMedia;
     private String channelId;
-
-    private RelativeLayout videoViewGroup;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -108,7 +107,6 @@ public class MainActivity extends ActionBarActivity {
             public void onAddLocalStream(final PlayRTC obj, final PlayRTCMedia playRTCMedia) {
                 long delayTime = 0;
 
-                localMedia = playRTCMedia;
                 localView.show(delayTime);
 
                 // Link the media stream to the view.
@@ -119,7 +117,6 @@ public class MainActivity extends ActionBarActivity {
             public void onAddRemoteStream(final PlayRTC obj, final String peerId, final String peerUserId, final PlayRTCMedia playRTCMedia) {
                 long delayTime = 0;
 
-                remoteMedia = playRTCMedia;
                 remoteView.show(delayTime);
 
                 // Link the media stream to the view.
@@ -174,7 +171,7 @@ public class MainActivity extends ActionBarActivity {
         settings.android.setContext(getApplicationContext());
 
         // T Developers Project Key.
-        settings.setTDCProjectId("60ba608a-e228-4530-8711-fa38004719c1");
+        settings.setTDCProjectId(T_DEVELOPERS_PROJECT_KEY);
 
         settings.setAudioEnable(true);
         settings.setVideoEnable(true);
@@ -195,67 +192,71 @@ public class MainActivity extends ActionBarActivity {
 
     private void createVideoView() {
         // Set the videoViewGroup which is contained local and remote video views.
-        videoViewGroup = (RelativeLayout) findViewById(R.id.video_view_group);
+        RelativeLayout myVideoViewGroup = (RelativeLayout) findViewById(R.id.video_view_group);
 
         if (localView != null) {
             return;
         }
 
-        // Set the size.
-        Point screenDimensions = new Point();
-        screenDimensions.x = videoViewGroup.getWidth();
-        screenDimensions.y = videoViewGroup.getHeight();
+        // Give my screen size to child view.
+        Point myViewDimensions = new Point();
+        myViewDimensions.x = myVideoViewGroup.getWidth();
+        myViewDimensions.y = myVideoViewGroup.getHeight();
 
         if (remoteView == null) {
-            createRemoteVideoView(screenDimensions, videoViewGroup);
+            createRemoteVideoView(myViewDimensions, myVideoViewGroup);
         }
 
         if (localView == null) {
-            createLocalVideoView(screenDimensions, videoViewGroup);
+            createLocalVideoView(myViewDimensions, myVideoViewGroup);
         }
     }
 
-    private void createLocalVideoView(final Point screenDimensions, RelativeLayout videoViewGroup) {
+    private void createLocalVideoView(final Point parentViewDimensions, RelativeLayout parentVideoViewGroup) {
         if (localView == null) {
-            // Set the size.
-            Point displaySize = new Point();
-            displaySize.x = (int) (screenDimensions.x * 0.3);
-            displaySize.y = (int) (screenDimensions.y * 0.3);
+            // Create the video size variable.
+            Point myVideoSize = new Point();
+            myVideoSize.x = (int) (parentViewDimensions.x * 0.3);
+            myVideoSize.y = (int) (parentViewDimensions.y * 0.3);
 
-            // Set the position.
-            RelativeLayout.LayoutParams param = new RelativeLayout.LayoutParams(displaySize.x, displaySize.y);
+            // Create the view parameter.
+            RelativeLayout.LayoutParams param = new RelativeLayout.LayoutParams(myVideoSize.x, myVideoSize.y);
             param.addRule(RelativeLayout.ALIGN_PARENT_RIGHT);
             param.addRule(RelativeLayout.ALIGN_PARENT_TOP);
             param.setMargins(30, 30, 30, 30);
 
-            // Create the localView.
-            localView = new PlayRTCVideoView(videoViewGroup.getContext(), displaySize);
+            // Create the localViews.
+            localView = new PlayRTCVideoView(parentVideoViewGroup.getContext(), myVideoSize);
 
-            // Set the layout parameters and add the view to the videoViewGrop.
+            // Set the layout parameters.
             localView.setLayoutParams(param);
-            videoViewGroup.addView(localView);
+
+            // Add the view to the parentVideoViewGrop.
+            parentVideoViewGroup.addView(localView);
 
             // Set the z-order.
             localView.setZOrderMediaOverlay(true);
         }
     }
 
-    private void createRemoteVideoView(final Point screenDimensions, RelativeLayout viewGroup) {
+    private void createRemoteVideoView(final Point parentViewDimensions, RelativeLayout parentVideoViewGroup) {
         if (remoteView == null) {
-            // Set the size.
-            Point displaySize = new Point();
-            displaySize.x = (int) (screenDimensions.x);
-            displaySize.y = (int) (screenDimensions.y);
+            // Create the video size variable.
+            Point myVideoSize = new Point();
+            myVideoSize.x = parentViewDimensions.x;
+            myVideoSize.y = parentViewDimensions.y;
 
-            // Set the position.
+            // Create the view parameters.
             RelativeLayout.LayoutParams param = new RelativeLayout.LayoutParams(RelativeLayout.LayoutParams.MATCH_PARENT, RelativeLayout.LayoutParams.MATCH_PARENT);
 
             // Create the remoteView.
-            remoteView = new PlayRTCVideoView(viewGroup.getContext(), displaySize);
+            remoteView = new PlayRTCVideoView(parentVideoViewGroup.getContext(), myVideoSize);
 
-            // Set the layout parameters and add the view to the videoViewGroup.
+            // Set the layout parameters.
             remoteView.setLayoutParams(param);
-            viewGroup.addView(remoteView);
+
+            // Add the view to the videoViewGroup.
+            parentVideoViewGroup.addView(remoteView);
         }
     }
 
