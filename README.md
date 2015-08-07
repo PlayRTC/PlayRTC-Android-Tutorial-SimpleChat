@@ -1,5 +1,3 @@
-![gradle build](https://travis-ci.org/PlayRTC/PlayRTC-Android-Tutorial-SimpleChat.svg)
-
 # PlayRTC Android Tutorial SimpleChat
 PlayRTC Android Tutorial SimpleChat
 
