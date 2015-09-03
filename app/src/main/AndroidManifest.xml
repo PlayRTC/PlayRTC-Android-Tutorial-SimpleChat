@@ -1,8 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
-    package="com.playrtc.simplechat"
-    android:versionCode="5"
-    android:versionName="2.0.2-rc.3">
+    package="com.playrtc.simplechat">
 
     <!-- PlayRTC SDK permission START -->
     <uses-feature android:name="android.hardware.camera" />

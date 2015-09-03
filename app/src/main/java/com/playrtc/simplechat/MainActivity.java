@@ -23,6 +23,9 @@ import com.sktelecom.playrtc.exception.UnsupportedPlatformVersionException;
 import com.sktelecom.playrtc.observer.PlayRTCObserver;
 import com.sktelecom.playrtc.stream.PlayRTCMedia;
 import com.sktelecom.playrtc.util.ui.PlayRTCVideoView;
+import com.sktelecom.playrtc.PlayRTC.PlayRTCAudioType;
+import com.sktelecom.playrtc.util.android.PlayRTCAudioManager;
+import com.sktelecom.playrtc.util.android.PlayRTCAudioManager.AudioDevice;
 
 import org.json.JSONObject;
 
@@ -44,7 +47,13 @@ public class MainActivity extends ActionBarActivity {
     private boolean isChannelConnected = false;
     private PlayRTCVideoView localView;
     private PlayRTCVideoView remoteView;
+    private PlayRTCMedia localMedia;
+    private PlayRTCMedia remoteMedia;
     private String channelId;
+
+    private RelativeLayout videoViewGroup;
+
+    private PlayRTCAudioManager pAudioManager = null;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -55,13 +64,13 @@ public class MainActivity extends ActionBarActivity {
 
         createPlayRTCInstance();
 
-        setPlayRTCConfiguration();
-
         setToolbar();
 
         setFragmentNavigationDrawer();
 
         setOnClickEventListenerToButton();
+
+        setAudioManager();
     }
 
     @Override
@@ -76,6 +85,10 @@ public class MainActivity extends ActionBarActivity {
 
     @Override
     protected void onDestroy() {
+        if (pAudioManager != null) {
+            pAudioManager.close();
+            pAudioManager = null;
+        }
         playrtc = null;
         playrtcObserver = null;
         android.os.Process.killProcess(android.os.Process.myPid());
@@ -107,6 +120,7 @@ public class MainActivity extends ActionBarActivity {
             public void onAddLocalStream(final PlayRTC obj, final PlayRTCMedia playRTCMedia) {
                 long delayTime = 0;
 
+                localMedia = playRTCMedia;
                 localView.show(delayTime);
 
                 // Link the media stream to the view.
@@ -117,6 +131,7 @@ public class MainActivity extends ActionBarActivity {
             public void onAddRemoteStream(final PlayRTC obj, final String peerId, final String peerUserId, final PlayRTCMedia playRTCMedia) {
                 long delayTime = 0;
 
+                remoteMedia = playRTCMedia;
                 remoteView.show(delayTime);
 
                 // Link the media stream to the view.
@@ -139,7 +154,6 @@ public class MainActivity extends ActionBarActivity {
                 // Create PlayRTC instance again.
                 // Because at the disconnect moment, the PlayRTC instance has removed.
                 createPlayRTCInstance();
-                setPlayRTCConfiguration();
             }
 
             @Override
@@ -147,16 +161,15 @@ public class MainActivity extends ActionBarActivity {
                 remoteView.hide(0);
 
                 // Delete channel and call onDisconnectChannel.
-                // Because there is a bug which is killed app. If remote peer reconnect after disconnect channel.
-                // This is going to patch at 2.0.1.
-                // playrtc.deleteChannel();
+                playrtc.deleteChannel();
             }
         };
     }
 
     private void createPlayRTCInstance() {
         try {
-            playrtc = PlayRTCFactory.newInstance(playrtcObserver);
+            PlayRTCSettings settings = createPlayRTCConfiguration();
+            playrtc = PlayRTCFactory.newInstance(settings, playrtcObserver);
         } catch (UnsupportedPlatformVersionException e) {
             e.printStackTrace();
         } catch (RequiredParameterMissingException e) {
@@ -164,8 +177,8 @@ public class MainActivity extends ActionBarActivity {
         }
     }
 
-    private void setPlayRTCConfiguration() {
-        PlayRTCSettings settings = playrtc.getSettings();
+    private PlayRTCSettings createPlayRTCConfiguration() {
+        PlayRTCSettings settings = new PlayRTCSettings();
 
         // PlayRTC instance have to get the application context.
         settings.android.setContext(getApplicationContext());
@@ -176,7 +189,7 @@ public class MainActivity extends ActionBarActivity {
         settings.setAudioEnable(true);
         settings.setVideoEnable(true);
         settings.video.setFrontCameraEnable(true);
-        settings.video.setBackCameraEnable(true);
+        settings.video.setBackCameraEnable(false);
         settings.setDataEnable(false);
 
         // File logging setting
@@ -188,6 +201,7 @@ public class MainActivity extends ActionBarActivity {
         settings.log.file.setLogPath(logPath.getAbsolutePath());
         settings.log.file.setLevel(PlayRTCSettings.DEBUG);
 
+        return settings;
     }
 
     private void createVideoView() {
@@ -260,6 +274,35 @@ public class MainActivity extends ActionBarActivity {
         }
     }
 
+    private void setAudioManager() {
+        pAudioManager = PlayRTCAudioManager.create(this, new Runnable() {
+            @Override
+            public void run() {
+
+                // Search audio devices and send to PlayRTCV
+                AudioDevice audioDivece = pAudioManager.getSelectedAudioDevice();
+                if (playrtc != null) {
+                    if (audioDivece == AudioDevice.WIRED_HEADSET) {
+                        // ear-Phone
+                        playrtc.notificationAudioType(PlayRTCAudioType.AudioReceiver);
+                    } else if (audioDivece == AudioDevice.SPEAKER_PHONE) {
+                        // Speaker-Phone
+                        playrtc.notificationAudioType(PlayRTCAudioType.AudioSpeaker);
+                    } else if (audioDivece == AudioDevice.EARPIECE) {
+                        // Ear-Speakerphone
+                        playrtc.notificationAudioType(PlayRTCAudioType.AudioEarphone);
+                    } else if (audioDivece == AudioDevice.BLUETOOTH) {
+                        // Bluetooth
+                        playrtc.notificationAudioType(PlayRTCAudioType.AudioBluetooth);
+                    }
+                }
+            }
+        });
+
+        // PlayRTCAudioManager run
+        pAudioManager.init();
+    }
+
     private void setOnClickEventListenerToButton() {
         // Add a create channel event listener.
         Button createButton = (Button) findViewById(R.id.create_button);
@@ -291,8 +334,7 @@ public class MainActivity extends ActionBarActivity {
         Button exitButton = (Button) findViewById(R.id.exit_button);
         exitButton.setOnClickListener(new View.OnClickListener() {
             public void onClick(View v) {
-                // null means my user id.
-                playrtc.disconnectChannel(null);
+                playrtc.deleteChannel();
             }
         });
     }

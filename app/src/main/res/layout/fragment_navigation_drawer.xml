@@ -12,9 +12,9 @@
         android:background="@color/primary"
         android:gravity="bottom"
         android:orientation="vertical"
+        android:paddingBottom="8dp"
         android:paddingLeft="16dp"
-        android:paddingRight="16dp"
-        android:paddingBottom="8dp">
+        android:paddingRight="16dp">
 
         <TextView
             android:id="@+id/profileText"
@@ -32,22 +32,22 @@
             android:enabled="false"
             android:gravity="center"
             android:hint="@string/channel_id_hint"
-            android:textColor="@color/primary_light"
+            android:inputType="none"
             android:textAppearance="?android:attr/textAppearanceSmall"
-            android:inputType="none" />
+            android:textColor="@color/primary_light" />
     </LinearLayout>
 
     <LinearLayout
         android:id="@+id/nav_main"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
+        android:layout_alignParentEnd="false"
         android:layout_below="@+id/nav_header"
         android:orientation="vertical"
+        android:paddingBottom="8dp"
         android:paddingLeft="16dp"
         android:paddingRight="16dp"
-        android:paddingTop="8dp"
-        android:paddingBottom="8dp"
-        android:layout_alignParentEnd="false">
+        android:paddingTop="8dp">
 
         <Button
             android:id="@+id/create_button"
@@ -69,9 +69,9 @@
             android:hint="@string/connect_channel_id_hint"
             android:imeOptions="actionSend"
             android:inputType="textCapCharacters"
+            android:minHeight="48dp"
             android:textColor="@color/primary"
-            android:textColorHint="@color/primary_light"
-            android:minHeight="48dp" />
+            android:textColorHint="@color/primary_light" />
 
         <Button
             android:id="@+id/connect_button"
@@ -90,26 +90,34 @@
             android:theme="@style/Base.ThemeOverlay.AppCompat.Light" />
 
         <TextView
+            android:id="@+id/textView"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="New Text"
-            android:id="@+id/textView" />
+            android:text="New Text" />
 
     </LinearLayout>
 
     <LinearLayout
         android:id="@+id/nav_footer"
-        android:orientation="horizontal"
         android:layout_width="match_parent"
         android:layout_height="fill_parent"
+        android:layout_alignParentEnd="false"
+        android:layout_alignParentStart="false"
         android:layout_below="@+id/nav_main"
+        android:gravity="bottom"
+        android:orientation="horizontal"
         android:paddingLeft="16dp"
         android:paddingRight="16dp"
         android:paddingTop="8dp"
-        android:layout_alignParentStart="false"
-        android:layout_alignParentEnd="false"
-        android:gravity="bottom"
         tools:ignore="RtlCompat">
+
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:gravity="center_horizontal"
+            android:text="@string/powered_by_playrtc"
+            android:textColor="@color/primary_light"
+            android:textSize="9sp" />
     </LinearLayout>
 
 </RelativeLayout>
