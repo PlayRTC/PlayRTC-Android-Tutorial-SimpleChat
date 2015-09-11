@@ -32,6 +32,9 @@ SimpleChat앱은 테스트를 위한 용도로 로그를 SD카드에 저장하�
 
 ## 갱신 기록
 
+### 2.0.4
+- SDK : 2.0.4
+
 ### 2.0.3
 - SDK : 2.0.3
 - 신규 : PlayRTCAudioManager 추가
