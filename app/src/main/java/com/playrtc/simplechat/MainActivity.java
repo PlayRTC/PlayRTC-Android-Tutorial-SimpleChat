@@ -16,7 +16,13 @@ import android.widget.TextView;
 
 import com.sktelecom.playrtc.PlayRTC;
 import com.sktelecom.playrtc.PlayRTCFactory;
+//playrtc v2.1.2
 import com.sktelecom.playrtc.config.PlayRTCSettings;
+//playrtc v2.2.0
+import com.sktelecom.playrtc.config.PlayRTCConfig;
+//playrtc v2.2.0
+import com.sktelecom.playrtc.config.PlayRTCVideoConfig.CameraType;
+
 import com.sktelecom.playrtc.exception.RequiredConfigMissingException;
 import com.sktelecom.playrtc.exception.RequiredParameterMissingException;
 import com.sktelecom.playrtc.exception.UnsupportedPlatformVersionException;
@@ -55,6 +61,9 @@ public class MainActivity extends ActionBarActivity {
 
     private PlayRTCAudioManager pAudioManager = null;
 
+    // use sdk v2.2.0
+    private boolean USE_SDK2_2_0 = false;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -62,6 +71,7 @@ public class MainActivity extends ActionBarActivity {
 
         createPlayRTCObserverInstance();
 
+        // use sdk v2.2.0
         createPlayRTCInstance();
 
         setToolbar();
@@ -70,7 +80,13 @@ public class MainActivity extends ActionBarActivity {
 
         setOnClickEventListenerToButton();
 
-        setAudioManager();
+        /*
+         * setAudioManager funtion is sample code for version 2.1.2.
+         * The sdk 2.2.0 version is set in PlayRTCConfig.
+         */
+        if(USE_SDK2_2_0 == false) {
+            setAudioManager();
+        }
     }
 
     @Override
@@ -85,6 +101,9 @@ public class MainActivity extends ActionBarActivity {
 
     @Override
     protected void onDestroy() {
+
+        // The sdk 2.2.0 version is set in PlayRTCConfig.
+        // So do not use. pAudioManager is null value
         if (pAudioManager != null) {
             pAudioManager.close();
             pAudioManager = null;
@@ -168,8 +187,17 @@ public class MainActivity extends ActionBarActivity {
 
     private void createPlayRTCInstance() {
         try {
-            PlayRTCSettings settings = createPlayRTCConfiguration();
-            playrtc = PlayRTCFactory.newInstance(settings, playrtcObserver);
+            if(USE_SDK2_2_0 == false) {
+                //function for sdk v2.1.2
+                PlayRTCSettings settings = createPlayRTCConfiguration();
+                playrtc = PlayRTCFactory.newInstance(settings, playrtcObserver);
+            }
+            else {
+                //function for sdk v2.2.0
+                PlayRTCConfig config = createPlayRTCConfig();
+                playrtc = PlayRTCFactory.createPlayRTC(config, playrtcObserver);
+            }
+
         } catch (UnsupportedPlatformVersionException e) {
             e.printStackTrace();
         } catch (RequiredParameterMissingException e) {
@@ -177,6 +205,43 @@ public class MainActivity extends ActionBarActivity {
         }
     }
 
+    //function for sdk v2.2.0
+    private PlayRTCConfig createPlayRTCConfig() {
+        PlayRTCConfig config = PlayRTCFactory.createConfig();
+
+        // PlayRTC instance have to get the application context.
+        config.setAndroidContext(getApplicationContext());
+
+        // T Developers Project Key.
+        config.setProjectId(T_DEVELOPERS_PROJECT_KEY);
+
+        config.video.setEnable(true);
+        config.video.setCameraType(CameraType.Front);
+        // default resolution 640x480
+        config.video.setMaxFrameSize(640, 480);
+        config.video.setMinFrameSize(640, 480);
+
+        config.audio.setEnable(true);   /* send video stream */
+        /* use PlayRTCAudioManager */
+        config.audio.setAudioManagerEnable(true);
+        config.data.setEnable(true);    /* use datachannel stream */
+
+        // Console logging setting
+        config.log.console.setLevel(PlayRTCConfig.DEBUG);
+
+        // File logging setting
+        File logPath = new File(Environment.getExternalStorageDirectory().getAbsolutePath() +
+                "/Android/data/" + getPackageName() + "/files/log/");
+        if (logPath.exists() == false) {
+            logPath.mkdirs();
+        }
+        config.log.file.setLogPath(logPath.getAbsolutePath());
+        config.log.file.setLevel(PlayRTCConfig.DEBUG);
+
+        return config;
+    }
+
+    //function for sdk v2.1.2
     private PlayRTCSettings createPlayRTCConfiguration() {
         PlayRTCSettings settings = new PlayRTCSettings();
 
@@ -274,6 +339,10 @@ public class MainActivity extends ActionBarActivity {
         }
     }
 
+    /* setAudioManager funtion is sample code for version 2.1.2.
+     * The sdk 2.2.0 version is set in PlayRTCConfig.
+     * So do not use
+     */
     private void setAudioManager() {
         pAudioManager = PlayRTCAudioManager.create(this, new Runnable() {
             @Override
