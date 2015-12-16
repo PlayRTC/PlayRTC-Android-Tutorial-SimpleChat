@@ -37,9 +37,13 @@ import org.json.JSONObject;
 
 import java.io.File;
 
+import android.util.Log;
+import android.Manifest;
+import android.content.pm.PackageManager;
+import android.annotation.SuppressLint;
 
 public class MainActivity extends ActionBarActivity {
-
+    private static final String LOG_TAG = "MainActivity";
     // Please change this key for your own project.
     private final String T_DEVELOPERS_PROJECT_KEY = "60ba608a-e228-4530-8711-fa38004719c1";
 
@@ -64,10 +68,31 @@ public class MainActivity extends ActionBarActivity {
     // use sdk v2.2.0
     private boolean USE_SDK2_2_0 = false;
 
+    public static final String[] MANDATORY_PERMISSIONS = {
+            "android.permission.INTERNET",
+            "android.permission.CAMERA",
+            "android.permission.RECORD_AUDIO",
+            "android.permission.MODIFY_AUDIO_SETTINGS",
+            "android.permission.ACCESS_NETWORK_STATE",
+            "android.permission.CHANGE_WIFI_STATE",
+            "android.permission.ACCESS_WIFI_STATE",
+            "android.permission.READ_PHONE_STATE",
+            "android.permission.BLUETOOTH",
+            "android.permission.BLUETOOTH_ADMIN",
+            "android.permission.WRITE_EXTERNAL_STORAGE"
+    };
+
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
+
+        // Application permission 23
+        if (android.os.Build.VERSION.SDK_INT >= 23) {
+
+            checkPermission(MANDATORY_PERMISSIONS);
+        }
 
         createPlayRTCObserverInstance();
 
@@ -86,6 +111,34 @@ public class MainActivity extends ActionBarActivity {
          */
         if(USE_SDK2_2_0 == false) {
             setAudioManager();
+        }
+    }
+
+    // Application permission 23
+    private final int MY_PERMISSION_REQUEST_STORAGE = 100;
+    @SuppressLint("NewApi")
+    private void checkPermission(String[] permissions) {
+
+        requestPermissions(permissions, MY_PERMISSION_REQUEST_STORAGE);
+    }
+    // Application permission 23
+    @Override
+    public void onRequestPermissionsResult(int requestCode, String[] permissions, int[] grantResults) {
+        switch (requestCode) {
+            case MY_PERMISSION_REQUEST_STORAGE:
+                int cnt = permissions.length;
+                for(int i = 0; i < cnt; i++ ) {
+
+                    if (grantResults[i] == PackageManager.PERMISSION_GRANTED ) {
+
+                        Log.i(LOG_TAG, "Permission[" + permissions[i] + "] = PERMISSION_GRANTED");
+
+                    } else {
+
+                        Log.i(LOG_TAG, "permission[" + permissions[i] + "] always deny");
+                    }
+                }
+                break;
         }
     }
 
