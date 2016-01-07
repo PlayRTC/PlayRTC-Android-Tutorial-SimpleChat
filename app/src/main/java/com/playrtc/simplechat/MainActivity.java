@@ -161,7 +161,11 @@ public class MainActivity extends ActionBarActivity {
             pAudioManager.close();
             pAudioManager = null;
         }
-        playrtc = null;
+        // instance release
+        if(playrtc != null) {
+            playrtc.close();
+            playrtc = null;
+        }
         playrtcObserver = null;
         android.os.Process.killProcess(android.os.Process.myPid());
         super.onDestroy();
