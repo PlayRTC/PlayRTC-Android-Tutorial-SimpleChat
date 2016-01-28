@@ -163,6 +163,7 @@ public class MainActivity extends ActionBarActivity {
         }
         // instance release
         if(playrtc != null) {
+            // If you does not call playrtc.close(), playrtc instence is remaining every new call.
             playrtc.close();
             playrtc = null;
         }
