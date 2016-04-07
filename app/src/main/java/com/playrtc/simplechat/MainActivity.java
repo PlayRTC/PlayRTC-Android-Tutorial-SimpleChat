@@ -63,10 +63,6 @@ public class MainActivity extends ActionBarActivity {
 
     private RelativeLayout videoViewGroup;
 
-    private PlayRTCAudioManager pAudioManager = null;
-
-    // use sdk v2.2.0
-    private boolean USE_SDK2_2_0 = false;
 
     public static final String[] MANDATORY_PERMISSIONS = {
             "android.permission.INTERNET",
@@ -105,13 +101,6 @@ public class MainActivity extends ActionBarActivity {
 
         setOnClickEventListenerToButton();
 
-        /*
-         * setAudioManager funtion is sample code for version 2.1.2.
-         * The sdk 2.2.0 version is set in PlayRTCConfig.
-         */
-        if(USE_SDK2_2_0 == false) {
-            setAudioManager();
-        }
     }
 
     // Application permission 23
@@ -155,12 +144,6 @@ public class MainActivity extends ActionBarActivity {
     @Override
     protected void onDestroy() {
 
-        // The sdk 2.2.0 version is set in PlayRTCConfig.
-        // So do not use. pAudioManager is null value
-        if (pAudioManager != null) {
-            pAudioManager.close();
-            pAudioManager = null;
-        }
         // instance release
         if(playrtc != null) {
             // If you does not call playrtc.close(), playrtc instence is remaining every new call.
@@ -198,7 +181,6 @@ public class MainActivity extends ActionBarActivity {
                 long delayTime = 0;
 
                 localMedia = playRTCMedia;
-                localView.show(delayTime);
 
                 // Link the media stream to the view.
                 playRTCMedia.setVideoRenderer(localView.getVideoRenderer());
@@ -206,10 +188,9 @@ public class MainActivity extends ActionBarActivity {
 
             @Override
             public void onAddRemoteStream(final PlayRTC obj, final String peerId, final String peerUserId, final PlayRTCMedia playRTCMedia) {
-                long delayTime = 0;
+
 
                 remoteMedia = playRTCMedia;
-                remoteView.show(delayTime);
 
                 // Link the media stream to the view.
                 playRTCMedia.setVideoRenderer(remoteView.getVideoRenderer());
@@ -221,8 +202,10 @@ public class MainActivity extends ActionBarActivity {
                 long delayTime = 0;
 
                 isChannelConnected = false;
-                remoteView.hide(delayTime);
-                localView.hide(delayTime);
+
+                // v2.2.5
+                localView.bgClearColor();
+                remoteView.bgClearColor();
 
                 // Clean the channel_id TextView.
                 TextView ChannelIdTextView = (TextView) findViewById(R.id.channel_id);
@@ -235,26 +218,22 @@ public class MainActivity extends ActionBarActivity {
 
             @Override
             public void onOtherDisconnectChannel(final PlayRTC obj, final String peerId, final String peerUserId) {
-                remoteView.hide(0);
 
-                // Delete channel and call onDisconnectChannel.
-                playrtc.deleteChannel();
+                // v2.2.5
+                remoteView.bgClearColor();
+
+
             }
         };
     }
 
     private void createPlayRTCInstance() {
         try {
-            if(USE_SDK2_2_0 == false) {
-                //function for sdk v2.1.2
-                PlayRTCSettings settings = createPlayRTCConfiguration();
-                playrtc = PlayRTCFactory.newInstance(settings, playrtcObserver);
-            }
-            else {
-                //function for sdk v2.2.0
-                PlayRTCConfig config = createPlayRTCConfig();
-                playrtc = PlayRTCFactory.createPlayRTC(config, playrtcObserver);
-            }
+
+            //function for sdk v2.2.0
+            PlayRTCConfig config = createPlayRTCConfig();
+            playrtc = PlayRTCFactory.createPlayRTC(config, playrtcObserver);
+
 
         } catch (UnsupportedPlatformVersionException e) {
             e.printStackTrace();
@@ -364,7 +343,9 @@ public class MainActivity extends ActionBarActivity {
 
             // Create the localViews.
             localView = new PlayRTCVideoView(parentVideoViewGroup.getContext(), myVideoSize);
-
+            // Background color
+            // v2.2.5
+            localView.setBgClearColor(225, 225, 225, 255);
             // Set the layout parameters.
             localView.setLayoutParams(param);
 
@@ -388,7 +369,9 @@ public class MainActivity extends ActionBarActivity {
 
             // Create the remoteView.
             remoteView = new PlayRTCVideoView(parentVideoViewGroup.getContext(), myVideoSize);
-
+            // Background color
+            // v2.2.5
+            remoteView.setBgClearColor(200, 200, 200, 255);
             // Set the layout parameters.
             remoteView.setLayoutParams(param);
 
@@ -397,38 +380,6 @@ public class MainActivity extends ActionBarActivity {
         }
     }
 
-    /* setAudioManager funtion is sample code for version 2.1.2.
-     * The sdk 2.2.0 version is set in PlayRTCConfig.
-     * So do not use
-     */
-    private void setAudioManager() {
-        pAudioManager = PlayRTCAudioManager.create(this, new Runnable() {
-            @Override
-            public void run() {
-
-                // Search audio devices and send to PlayRTCV
-                AudioDevice audioDivece = pAudioManager.getSelectedAudioDevice();
-                if (playrtc != null) {
-                    if (audioDivece == AudioDevice.WIRED_HEADSET) {
-                        // ear-Phone
-                        playrtc.notificationAudioType(PlayRTCAudioType.AudioReceiver);
-                    } else if (audioDivece == AudioDevice.SPEAKER_PHONE) {
-                        // Speaker-Phone
-                        playrtc.notificationAudioType(PlayRTCAudioType.AudioSpeaker);
-                    } else if (audioDivece == AudioDevice.EARPIECE) {
-                        // Ear-Speakerphone
-                        playrtc.notificationAudioType(PlayRTCAudioType.AudioEarphone);
-                    } else if (audioDivece == AudioDevice.BLUETOOTH) {
-                        // Bluetooth
-                        playrtc.notificationAudioType(PlayRTCAudioType.AudioBluetooth);
-                    }
-                }
-            }
-        });
-
-        // PlayRTCAudioManager run
-        pAudioManager.init();
-    }
 
     private void setOnClickEventListenerToButton() {
         // Add a create channel event listener.

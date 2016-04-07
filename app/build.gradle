@@ -2,14 +2,21 @@ apply plugin: 'com.android.application'
 
 android {
     compileSdkVersion 23
-    buildToolsVersion "23.0.2"
+    buildToolsVersion "23.0.3"
     defaultConfig {
         applicationId 'com.playrtc.simplechat'
         minSdkVersion 16
         targetSdkVersion 23
-        versionCode 14
-        versionName "2.2.4"
+        versionCode 15
+        versionName "2.2.5"
+        multiDexEnabled true
     }
+
+    dexOptions {
+        javaMaxHeapSize "4g"
+        preDexLibraries = false
+    }
+
     buildTypes {
         release {
             minifyEnabled false
@@ -31,4 +38,5 @@ dependencies {
     compile 'com.android.support:design:23.1.1'
     compile 'com.android.support:appcompat-v7:23.1.1'
     compile 'com.android.support:recyclerview-v7:23.1.1'
+    compile "com.android.support:multidex:1.0.1"
 }
