@@ -16,8 +16,6 @@ import android.widget.TextView;
 
 import com.sktelecom.playrtc.PlayRTC;
 import com.sktelecom.playrtc.PlayRTCFactory;
-//playrtc v2.1.2
-import com.sktelecom.playrtc.config.PlayRTCSettings;
 //playrtc v2.2.0
 import com.sktelecom.playrtc.config.PlayRTCConfig;
 //playrtc v2.2.0
@@ -29,9 +27,8 @@ import com.sktelecom.playrtc.exception.UnsupportedPlatformVersionException;
 import com.sktelecom.playrtc.observer.PlayRTCObserver;
 import com.sktelecom.playrtc.stream.PlayRTCMedia;
 import com.sktelecom.playrtc.util.ui.PlayRTCVideoView;
-import com.sktelecom.playrtc.PlayRTC.PlayRTCAudioType;
-import com.sktelecom.playrtc.util.android.PlayRTCAudioManager;
-import com.sktelecom.playrtc.util.android.PlayRTCAudioManager.AudioDevice;
+import com.sktelecom.playrtc.config.PlayRTCAudioConfig.AudioCodec;
+import com.sktelecom.playrtc.config.PlayRTCVideoConfig.VideoCodec;
 
 import org.json.JSONObject;
 
@@ -147,9 +144,20 @@ public class MainActivity extends ActionBarActivity {
         // instance release
         if(playrtc != null) {
             // If you does not call playrtc.close(), playrtc instence is remaining every new call.
+            // playrtc instence can not used again
             playrtc.close();
             playrtc = null;
         }
+
+        // new v2.2.6
+        if (localView != null) {
+            localView.release();
+        }
+        // new v2.2.6
+        if (remoteView != null) {
+            remoteView.release();
+        }
+
         playrtcObserver = null;
         android.os.Process.killProcess(android.os.Process.myPid());
         super.onDestroy();
@@ -178,7 +186,6 @@ public class MainActivity extends ActionBarActivity {
 
             @Override
             public void onAddLocalStream(final PlayRTC obj, final PlayRTCMedia playRTCMedia) {
-                long delayTime = 0;
 
                 localMedia = playRTCMedia;
 
@@ -199,7 +206,6 @@ public class MainActivity extends ActionBarActivity {
 
             @Override
             public void onDisconnectChannel(final PlayRTC obj, final String disconnectReason) {
-                long delayTime = 0;
 
                 isChannelConnected = false;
 
@@ -252,15 +258,44 @@ public class MainActivity extends ActionBarActivity {
         // T Developers Project Key.
         config.setProjectId(T_DEVELOPERS_PROJECT_KEY);
 
-        config.video.setEnable(true);
+        config.video.setEnable(true); /* send video stream */
+
+        /*
+         * enum CameraType
+         * - Front
+         * - Back
+         */
         config.video.setCameraType(CameraType.Front);
+
+
+        /*
+         * enum VideoCodec
+         * - VP8
+         * - VP9
+         * - H264 : You can use the device must support.
+         */
+        config.video.setPreferCodec(VideoCodec.VP8);
+
+
         // default resolution 640x480
         config.video.setMaxFrameSize(640, 480);
         config.video.setMinFrameSize(640, 480);
 
-        config.audio.setEnable(true);   /* send video stream */
+
+
+
+        config.audio.setEnable(true);   /* send audio stream */
         /* use PlayRTCAudioManager */
         config.audio.setAudioManagerEnable(true);
+
+        /*
+         * enum AudioCodec
+         * - ISAC
+         * - OPUS
+         */
+        config.audio.setPreferCodec(AudioCodec.OPUS);
+
+
         config.data.setEnable(true);    /* use datachannel stream */
 
         // Console logging setting
@@ -276,34 +311,6 @@ public class MainActivity extends ActionBarActivity {
         config.log.file.setLevel(PlayRTCConfig.DEBUG);
 
         return config;
-    }
-
-    //function for sdk v2.1.2
-    private PlayRTCSettings createPlayRTCConfiguration() {
-        PlayRTCSettings settings = new PlayRTCSettings();
-
-        // PlayRTC instance have to get the application context.
-        settings.android.setContext(getApplicationContext());
-
-        // T Developers Project Key.
-        settings.setTDCProjectId(T_DEVELOPERS_PROJECT_KEY);
-
-        settings.setAudioEnable(true);
-        settings.setVideoEnable(true);
-        settings.video.setFrontCameraEnable(true);
-        settings.video.setBackCameraEnable(false);
-        settings.setDataEnable(false);
-
-        // File logging setting
-        File logPath = new File(Environment.getExternalStorageDirectory().getAbsolutePath() +
-                "/Android/data/" + getPackageName() + "/files/log/");
-        if (logPath.exists() == false) {
-            logPath.mkdirs();
-        }
-        settings.log.file.setLogPath(logPath.getAbsolutePath());
-        settings.log.file.setLevel(PlayRTCSettings.DEBUG);
-
-        return settings;
     }
 
     private void createVideoView() {
@@ -342,18 +349,23 @@ public class MainActivity extends ActionBarActivity {
             param.setMargins(30, 30, 30, 30);
 
             // Create the localViews.
-            localView = new PlayRTCVideoView(parentVideoViewGroup.getContext(), myVideoSize);
+            // new v2.2.6
+            localView = new PlayRTCVideoView(parentVideoViewGroup.getContext());
+            // Set the z-order.
+            localView.setZOrderMediaOverlay(true);
             // Background color
             // v2.2.5
             localView.setBgClearColor(225, 225, 225, 255);
             // Set the layout parameters.
             localView.setLayoutParams(param);
 
+            // new v2.2.6
+            localView.initRenderer();
+
             // Add the view to the parentVideoViewGrop.
             parentVideoViewGroup.addView(localView);
 
-            // Set the z-order.
-            localView.setZOrderMediaOverlay(true);
+
         }
     }
 
@@ -368,12 +380,16 @@ public class MainActivity extends ActionBarActivity {
             RelativeLayout.LayoutParams param = new RelativeLayout.LayoutParams(RelativeLayout.LayoutParams.MATCH_PARENT, RelativeLayout.LayoutParams.MATCH_PARENT);
 
             // Create the remoteView.
-            remoteView = new PlayRTCVideoView(parentVideoViewGroup.getContext(), myVideoSize);
+            // new v2.2.6
+            remoteView = new PlayRTCVideoView(parentVideoViewGroup.getContext());
             // Background color
             // v2.2.5
             remoteView.setBgClearColor(200, 200, 200, 255);
             // Set the layout parameters.
             remoteView.setLayoutParams(param);
+
+            // new v2.2.6
+            remoteView.initRenderer();
 
             // Add the view to the videoViewGroup.
             parentVideoViewGroup.addView(remoteView);
