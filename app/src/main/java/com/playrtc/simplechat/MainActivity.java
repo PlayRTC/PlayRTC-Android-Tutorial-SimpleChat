@@ -9,6 +9,7 @@ import android.os.Environment;
 import android.support.v4.widget.DrawerLayout;
 import android.support.v7.app.ActionBarActivity;
 import android.support.v7.widget.Toolbar;
+import android.text.TextUtils;
 import android.view.View;
 import android.widget.Button;
 import android.widget.RelativeLayout;
@@ -30,6 +31,7 @@ import com.sktelecom.playrtc.util.ui.PlayRTCVideoView;
 import com.sktelecom.playrtc.config.PlayRTCAudioConfig.AudioCodec;
 import com.sktelecom.playrtc.config.PlayRTCVideoConfig.VideoCodec;
 
+import org.json.JSONException;
 import org.json.JSONObject;
 
 import java.io.File;
@@ -176,7 +178,8 @@ public class MainActivity extends ActionBarActivity {
     private void createPlayRTCObserverInstance() {
         playrtcObserver = new PlayRTCObserver() {
             @Override
-            public void onConnectChannel(final PlayRTC obj, final String channelId, final String channelCreateReason) {
+            public void onConnectChannel(final PlayRTC obj, final String channelId, final String channelCreateReason, final String channelType) {
+                Log.i(LOG_TAG,"onConnectChannel");
                 isChannelConnected = true;
 
                 // Fill the channelId to the channel_id TextView.
@@ -186,7 +189,7 @@ public class MainActivity extends ActionBarActivity {
 
             @Override
             public void onAddLocalStream(final PlayRTC obj, final PlayRTCMedia playRTCMedia) {
-
+                Log.i(LOG_TAG,"onAddLocalStream");
                 localMedia = playRTCMedia;
 
                 // Link the media stream to the view.
@@ -196,7 +199,7 @@ public class MainActivity extends ActionBarActivity {
             @Override
             public void onAddRemoteStream(final PlayRTC obj, final String peerId, final String peerUserId, final PlayRTCMedia playRTCMedia) {
 
-
+                Log.i(LOG_TAG,"onAddRemoteStream");
                 remoteMedia = playRTCMedia;
 
                 // Link the media stream to the view.
@@ -206,7 +209,7 @@ public class MainActivity extends ActionBarActivity {
 
             @Override
             public void onDisconnectChannel(final PlayRTC obj, final String disconnectReason) {
-
+                Log.i(LOG_TAG,"onDisconnectChannel");
                 isChannelConnected = false;
 
                 // v2.2.5
@@ -222,20 +225,20 @@ public class MainActivity extends ActionBarActivity {
                 createPlayRTCInstance();
             }
 
-            @Override
-            public void onOtherDisconnectChannel(final PlayRTC obj, final String peerId, final String peerUserId) {
-
-                // v2.2.5
-                remoteView.bgClearColor();
-
-
-            }
+//            @Override
+//            public void onOtherDisconnectChannel(final PlayRTC obj, final String peerId, final String peerUserId) {
+//
+//                // v2.2.5
+//                remoteView.bgClearColor();
+//
+//
+//            }
         };
     }
 
     private void createPlayRTCInstance() {
         try {
-
+            Log.i(LOG_TAG,"createPlayRTCInstance");
             //function for sdk v2.2.0
             PlayRTCConfig config = createPlayRTCConfig();
             playrtc = PlayRTCFactory.createPlayRTC(config, playrtcObserver);
@@ -403,10 +406,20 @@ public class MainActivity extends ActionBarActivity {
         createButton.setOnClickListener(new View.OnClickListener() {
             public void onClick(View v) {
                 try {
+//                    JSONObject obj = new JSONObject();
+//                    JSONObject peer = new JSONObject();
+//
+//                    peer.put("uid", "userId");
+//                    obj.put("peer", peer);
+//
+//                    playrtc.createChannel(obj);
                     playrtc.createChannel(new JSONObject());
                 } catch (RequiredConfigMissingException e) {
                     e.printStackTrace();
                 }
+//                catch (JSONException e){
+//                    e.printStackTrace();;
+//                }
             }
         });
 
